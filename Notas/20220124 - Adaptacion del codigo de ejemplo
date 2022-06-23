@@ -1,0 +1,95 @@
+Acercarse a un nuevo contenido.
+
+1. Encontrar informacion del sensor
+	-Buscar hoja de datos del sensor
+	https://datasheets.maximintegrated.com/en/ds/MAX30100.pdf
+	
+2. Encontrar diagrama de conexion
+	-Buscar distintos diagramas de conexion
+	https://how2electronics.com/interfacing-max30100-pulse-oximeter-sensor-arduino/
+	-Conclusiones de conexion
+	Sensor		uC
+	Vin		5V
+	GND		GND
+	SDA		14	4.7kohms pull_up
+	SCL 		15	4.7kohms pull_up
+	
+3. Encontrar una biblioteca de funcionamiento
+	-Pagina del fabricante, github, en foros, en el administrador de bibliotecas del la IDE
+	-Obtenido de Spakfun en GitHub a través del gestor de bibliotecas de la IDE
+	https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
+
+4. Cargar ejemplo de referencia.
+	-https://github.com/hugoescalpelo/esp32cam-max30100/blob/main/esp32cam-max30100-basic_reading/esp32cam-max30100-basic_reading.ino
+	
+5. Cargar el ejemplo de aplicacion
+	-Se obtiene de la seccion de ejemplos de la biblioteca y en este caso es el programa llamado Example8_SPO2
+	-Realizar analisis del programa
+	-Hacer adaptacion del programa de ejemplo
+	
+6. Realizar la adaptación del código para funcionar con el ESP32CAM bajo el modelo estandar del IoT
+	-https://github.com/codigo-iot/ESP32CAM_MQTT-Basic/blob/main/ESP32CAM_MQTT-Basic/ESP32CAM_MQTT-Basic.ino
+	-Ajustar comentarios/documentacion
+	-Ajustar credenciales de WiFi
+	-Colocar la IP del broker MQTT a usar #ifconfig
+	-Identificar donde se envian los datos del sensor
+	-Configurar el tema en donde se va a publicar
+	
+	Adaptar programa
+	-Completar bilbiotecas
+	-Inclusion de objetos
+	-Adaptar listado de pines
+	-Configuracion de pines
+	-Instrucciones de funcionamiento
+	-Nota: Integrar bloques funcionales uno por uno
+	-Consturccion del JSON
+	-Conversion de datos
+	-Enviar datos por MQTT	
+7. Generar un servidor del IoT
+	-Tomar los valores de MQT	
+	-Crear formulario de datos de paciente
+	-Visualizar datos del sensor
+	-Crear protodiagnostico
+	-Crear boton de diagnostico
+	-Asociar base de datos
+	
+	id, fecha, nombre, correo, hr, spo2, diagnostico
+	
+8. Crear base de datos
+	-Abrir terminal
+	-sudo mysql
+	-Crear base de datos
+		CREATE DATABASE nombre_bd;
+	-Seleccionar la base de datos
+		USE nombre_db;
+	-Crear base de datos
+		CREATE TABLE covida (id INT (6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP, nombre CHAR (255) NOT NULL, correo CHAR (255), hr INT (8) NOT NULL, spo2 INT(8) NOT NULL, diagnostico CHAR (255));
+	-Asegurarte de que cada valor que va a almacenarse en la base de datos esté asociado a una variable global
+	-Crear query para nodo de BD
+	
+	msg.topic="INSERT INTO covida (nombre, correo, hr, spo2, diagnostico) VALUES ('"+global.get ("nombre")+"','"+global.get ("correo")+"','"+global.get ("ritmo")+"','"+ global.get ("oxi") +"','" + global.get ("diag") +"')";
+	
+9. Crear un boton para cargar la informacion a la base de datos.
+
+10. Agregar un visualizador de grafana
+	-Para arrancar Grafana
+	sudo /bin/systemctl start grafana-server
+	-Agregar un origen de datos
+	-Agregar un nuevo panel
+		
+	-Comandos utiles
+	-Consultar bases de datos
+		show databases;
+	-Consultar las tablas
+		show tables;
+	-Consultar columnas;
+		describe nombre_tabla;
+	-Agregar columna a tabla
+	ALTER TABLE tabla
+	ADD COLUMN nombre_columna TIPO ORDEN;
+	https://www.mysqltutorial.org/mysql-add-column/
+	-Cambiar tipo de dato de columna
+	ALTER TABLE tabla
+	MODIFY nombre_columna TIPO;
+	-Consultar datos de una tabla
+	SELECT * FROM nombre_tabla;
